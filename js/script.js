@@ -1,27 +1,66 @@
-const inputLetter = document.querySelector("input.letter");
-const pMessage = document.querySelector("p.message");
-const pWordInProgress = document.querySelector("p.word-in-progress");
-const pRemaining = document.querySelector("p.remaining");
-const ulGuessedLetters = document.querySelector("ul.guessed-letters");
-const pRemainingSpan = document.querySelector("p.remaining span");
-const buttonGuess = document.querySelector("button.guess");
-const buttonPlayAgain = document.querySelector("button.play-again");
-const word = "magnolia";
+const guessedLettersElement = document.querySelector(".guessed-letters");
+const guessLetterButton = document.querySelector(".guess");
+const letterInput = document.querySelector(".letter");
+const wordInProgress = document.querySelector(".word-in-progress");
+const remainingGuessesElement = document.querySelector(".remaining");
+const remainingGuessesSpan = document.querySelector(".remaining span");
+const message = document.querySelector(".message");
+const playAgainButton = document.querySelector(".play-again");
 
+const word = "magnolia";
+const guessedLetters = [];
+
+// Display our symbols as placeholders for the chosen word's letters
 const placeholder = function (word) {
-    let placeholderLetters = [];
-    for (let letter of word) {
-        placeholderLetters.push('●');
+    const placeholderLetters = [];
+    for (const letter of word) {
+        console.log(letter);
+        placeholderLetters.push("●");
     }
-    pWordInProgress.innerText = placeholderLetters.join('');
-}
+    wordInProgress.innerText = placeholderLetters.join("");
+};
 
 placeholder(word);
 
-buttonGuess.addEventListener("click", function (e) {
+guessLetterButton.addEventListener("click", function (e) {
     e.preventDefault();
-    const guess = inputLetter.value;
-    console.log(guess);
-    inputLetter.value="";
+    // Empty message paragraph
+    message.innerText = "";
+    // Let's grab what was entered in the input
+    const guess = letterInput.value;
+    // Let's make sure that it is a single letter
+    const goodGuess = validateInput(guess);
 
-})
+    if (goodGuess) {
+        // We've got a letter! Let's guess!
+        makeGuess(guess);
+    }
+    letterInput.value = "";
+});
+
+const validateInput = function (input) {
+    const acceptedLetter = /[a-zA-Z]/;
+    if (input.length === 0) {
+        // Is the input empty?
+        message.innerText = "Please enter a letter.";
+    } else if (input.length > 1) {
+        // Did you type more than one letter?
+        message.innerText = "Please enter a single letter.";
+    } else if (!input.match(acceptedLetter)) {
+        // Did you type a number, a special character or some other non letter thing?
+        message.innerText = "Please enter a letter from A to Z.";
+    } else {
+        // We finally got a single letter, omg yay
+        return input;
+    }
+};
+
+const makeGuess = function (guess) {
+    guess = guess.toUpperCase();
+    if (guessedLetters.includes(guess)) {
+        message.innerText = "You already guessed that letter, silly. Try again.";
+    } else {
+        guessedLetters.push(guess);
+        console.log(guessedLetters);
+    }
+};
