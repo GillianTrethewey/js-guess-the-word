@@ -7,6 +7,15 @@ const remainingGuessesSpan = document.querySelector(".remaining span");
 const message = document.querySelector(".message");
 const playAgainButton = document.querySelector(".play-again");
 
+const getWord = async function() {
+    const wordjson = await fetch(url);
+    const data = await wordjson.json();
+    const word = Math.floor(Math.random() * data.length);
+}
+
+
+
+
 const word = "magnolia";
 const guessedLetters = [];
 
@@ -57,5 +66,43 @@ const makeGuess = function (guess) {
     } else {
         guessedLetters.push(guess);
         console.log(guessedLetters);
+        showGuessedLetters();
+        updateWordInProgress(guessedLetters);
     }
 };
+
+const showGuessedLetters = function() {
+    guessedLettersElement.innerHTML = '';
+
+    for (let letter of guessedLetters) {
+        const li = document.createElement("li");
+        li.innerText = letter;
+        guessedLettersElement.append(li);
+    }
+};
+
+const updateWordInProgress =function(guessedLetters) {
+    const wordArray = word.toUpperCase().split('');
+    const revealWord = [];
+    for (let letter of wordArray) {
+        if (guessedLetters.includes(letter)) {
+           revealWord.push(letter);
+        } else {
+            revealWord.push("●");
+        }
+    }
+    wordInProgress.innerText = revealWord.join('');
+    checkIfWin();
+};
+
+const checkIfWin = function () {
+    if (word.toUpperCase() === wordInProgress.innerText) {
+        message.classList.add("win");
+        message.innerHTML = `<p class="highlight">You guessed it!!</p>
+`       playAgainButton.classList.remove("hide");
+    }
+}
+
+playAgainButton.addEventListener("click", function () {
+
+})
